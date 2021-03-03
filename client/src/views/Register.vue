@@ -5,11 +5,11 @@
         <div class="card-header text-white bg-primary">
           Register
         </div>
-        <form class="mt-5">
+        <form class="mt-5" @submit.prevent="registerUser">
           <div class="form-group">
             <label for="exampleInputEmail1">Username</label>
             <input 
-              type="email" 
+              type="text" 
               class="form-control" 
               id="exampleInputEmail1" 
               aria-describedby="emailHelp"
@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
   export default {
     data: () => ({
       username: '',
@@ -67,7 +68,25 @@
       login: '',
       password: '',
       confirm_password: ''
-    })
+    }),
+    methods: {
+      ...mapActions(['register']),
+      registerUser() {
+        let user = {
+          username: this.username,
+          email: this.email,
+          login: this.login,
+          password: this.password,
+          confirm_password: this.confirm_password
+        }
+        this.register(user).then(res => {
+          if (res.data.success) {
+            this.$router.push('/login')
+          }
+        })
+
+      }
+    }
   }
 </script>
 

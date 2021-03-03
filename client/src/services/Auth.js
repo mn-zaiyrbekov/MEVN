@@ -21,6 +21,23 @@ const mutations = {
     state.token = token,
     state.user = user,
     state.status = 'scuccess'
+  },
+  registre_request(state) {
+    state.status = 'loading'
+  },
+  register_success(state) {
+    state.status = 'success'
+  },
+  logout(state) {
+    state.status = '',
+    state.token = '',
+    state.user = ''
+  },
+  profile_request(state) {
+    state.status = 'loading'
+  },
+  user_profile(state, user) {
+    state.user = user
   }
 }
 
@@ -36,6 +53,28 @@ const actions = {
       commit('auth_success', token, user)
     }
     return res
+  },
+  async register({commit}, userData) {
+    commit('registre_request')
+    let res = await axios.post('http://localhost:8100/api/users/register', userData)
+    if (res.data.success !== undefined) {
+      commit('register_success')
+    }
+    return res
+  },
+  async getProfile({commit}) {
+    commit('profile_request')
+    let res = await axios.get('http://localhost:8100/api/users/profile')
+    commit('user_profile', res.data.user)
+    return res
+  },
+  // Logout
+  async logout({commit}) {
+    await localStorage.removeItem('token')
+    commit('logout')
+    delete axios.defaults.headers.common['Authirization']
+    router.push('/login')
+    return
   }
 }
 
