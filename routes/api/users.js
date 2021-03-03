@@ -58,35 +58,37 @@ router.post('/login', (req, res) => {
     if (!user) {
       res.status(404).json({
         msg: 'ПОльзователь не найден',
-        success: fasle
+        success: false
+      })
+    }else{
+      // hash compare password
+      bcrypt.compare(req.body.password, user.password)
+      .then(isMatch => {
+        if (isMatch) {
+          const payload = {
+            _id: user._id,
+            usename: user.username,
+            email: user.email,
+            login: user.login          
+          }
+          jwt.sign(payload, config, {
+            expiresIn: 604800
+          }, (err, token) => {
+            res.status(200).json({
+              success: 'ok',
+              user: user,
+              token: `Bearer ${token}`,
+              msg: 'Вход выполнен!'
+            })
+          })
+        }else{
+          res.status(404).json({
+            msg: 'Не правильный пароль!',
+            success: false
+          })
+        }
       })
     }
-    // hash compare password
-    bcrypt.compare(req.body.password, user.password)
-    .then(isMatch => {
-      if (isMatch) {
-        const payload = {
-          _id: user._id,
-          usename: user.username,
-          email: user.email,
-          login: user.login          
-        }
-        jwt.sign(payload, config, {
-          expiresIn: 604800
-        }, (err, token) => {
-          res.status(200).json({
-            success: 'ok',
-            token: `Bearer ${token}`,
-            msg: 'Вход выполнен!'
-          })
-        })
-      }else{
-        res.status(404).json({
-          msg: 'Не правильный пароль!',
-          success: fasle
-        })
-      }
-    })
   })
 })
 
