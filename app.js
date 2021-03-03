@@ -3,7 +3,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 const path = require('path')
 const config = require('./config/config')
-
+const passport = require('passport')
 
 // INITIALIZE APP
 const app = express()
@@ -12,6 +12,8 @@ const app = express()
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(cors())
+app.use(passport.initialize())
+require('./config/passport')(passport)
 
 // STATIC DIRECTORY
 app.use(express.static(path.join(__dirname, 'public')))

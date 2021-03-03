@@ -91,5 +91,17 @@ router.post('/login', (req, res) => {
 })
 
 
+/**
+ * @route POST api/users/Profile
+ * @description Return the User's data
+ * @access Private
+ */
+router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res) => {
+  return res.json({
+    user: req.user
+  })
+})
+
+
 
 module.exports = router
